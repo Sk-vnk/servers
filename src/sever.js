@@ -32,6 +32,10 @@ const bookSchema = new mongoose.Schema({
 
 const Book = mongoose.model("Book", bookSchema);
 
+app.get('/:fruit', function (req, res) {
+  console.log(req.params);
+  res.send();
+});
 
 app.post("/book", async (request, response) => {
     const book = await Book.create({
@@ -49,23 +53,53 @@ app.post("/book", async (request, response) => {
   response.send(successResponse);
 });
 
-app.get("/book", (request, response) => {
-  const index = books.findIndex((x) => x.title === request.body.title);
+app.get("/book", async (request, response) => {
+  const books = await Book.find({});
 
   const successResponse = {
     message: "book found",
-    book: books[index],
+    books: books,
   };
 
   response.send(successResponse);
 });
 
-app.delete("/book", (request, response) => {
-  const index = books.findIndex((x) => x.title === request.body.title);
+app.get("/book", async ())
+
+app.delete("/book", async (request, response) => {
+  const book = await Book.deleteOne({
+    title: request.body.title
+});
+const successResponse = {
+    message: "Book Deleted",
+    book: book,
+};
+
+response.send(successResponse);
 });
 
-app.put("/book");
+app.put("/book", async (request, response) => {
+    const book = await Book.updateOne({
+        author: request.body.author,
+    });
+    const successResponse = {
+      message: "Author Updated",
+      book: book,
+    };
 
+    response.send(successResponse);
+  });
+
+  app.put("/book/dynamic", async (request, response) => {
+    const index = await Book.updateOne({title: request.body.title},{ [request.body.dynamicKey]: request.body.dynamicValue});
+    
+    const successResponse = {
+      message: "Author Updated",
+      book: index,
+    };
+
+    response.send(successResponse);
+  });
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });
