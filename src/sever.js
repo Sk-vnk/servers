@@ -12,26 +12,7 @@ app.use(express.json());
 
 
 connection();
-
-
-const bookSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  author: {
-    type: String,
-  },
-  genre: {
-    type: String,
-  },
-});
-
-const Book = mongoose.model("Book", bookSchema);
-
-
-
+const Book = require("../book/model");
 app.post("/book", async (request, response) => {
     const book = await Book.create({
         title: request.body.title,
