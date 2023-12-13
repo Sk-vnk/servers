@@ -1,7 +1,8 @@
 require("dotenv").config();
-const { configDotenv } = require("dotenv");
 const express = require("express");
 const mongoose = require("mongoose");
+
+const connection = require("../db/connection");
 
 const port = process.env.PORT || 5001;
 
@@ -9,12 +10,9 @@ const app = express();
 
 app.use(express.json());
 
-const connection = async () => {
-  await mongoose.connect(process.env.MONGODB_URI);
-  console.log("Connected to MongoDB on the cloud");
-};
 
 connection();
+
 
 const bookSchema = new mongoose.Schema({
   title: {
@@ -32,10 +30,7 @@ const bookSchema = new mongoose.Schema({
 
 const Book = mongoose.model("Book", bookSchema);
 
-app.get('/:fruit', function (req, res) {
-  console.log(req.params);
-  res.send();
-});
+
 
 app.post("/book", async (request, response) => {
     const book = await Book.create({
@@ -63,8 +58,6 @@ app.get("/book", async (request, response) => {
 
   response.send(successResponse);
 });
-
-app.get("/book", async ())
 
 app.delete("/book", async (request, response) => {
   const book = await Book.deleteOne({
